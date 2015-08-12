@@ -3,6 +3,10 @@
 # (see $cleanurls in config.inc.php)
 #####################################
 
+# See https://stackoverflow.com/questions/4558629/mod-rewrite-not-behaving-nicely
+#     http://www.bennadel.com/blog/2218-Negotiation-Discovered-File-s-Matching-Request-None-Could-Be-Negotiated.htm
+#     https://httpd.apache.org/docs/current/content-negotiation.html
+Options -MultiViews +FollowSymLinks
 
 # Rewrite clean URLs onto real files
 <IfModule mod_rewrite.c>
