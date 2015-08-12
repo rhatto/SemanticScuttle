@@ -778,4 +778,27 @@ $unittestUrl = null;
  */
 $allowUnittestMode = false;
 
+/***************************************************
+ * Caching support
+ *
+ * Use the following configuration if you want to provide a link
+ * to a cached copy of your bookmarks.
+ *
+ * Please note that these feature just provide the link if a cached
+ * copy exists.
+ *
+ * You should download SemanticScuttle bookmarks using a tool like
+ * https://git.sarava.org/?p=httruta.git
+ */
+
+/**
+ * Set to the filesystem folder where your bookmark cache resides.
+ */
+$cacheFolder = null;
+
+/**
+ * Set to the base public URL of you cache folder.
+ */
+$cacheUrl = null;
+
 ?>
