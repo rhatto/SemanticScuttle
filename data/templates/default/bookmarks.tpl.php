@@ -337,6 +337,20 @@ if ($currenttag!= '') {
 			}
 		}
 
+    // Local cache
+    $cacheLink = null;
+    if ($GLOBALS['cacheFolder'] != null && $GLOBALS['cacheUrl'] != null) {
+      // Hashing discussion at http://linuxprocess.free.fr/MHonArc/Oct-2005/msg00016.html
+      $assetHash = sha1($row['bAddress'] . "\n");
+      $assetHash = substr($assetHash, 0, 2) . '/' . substr($assetHash, 2, 2) . '/' . $assetHash;
+      $assetFile = $GLOBALS['cacheFolder'] . '/' . $assetHash;
+
+      if (file_exists($assetFile)) {
+        $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash;
+        $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+      }
+    }
+
 		// Copy link
 		if ($userservice->isLoggedOn()
             && ($currentUser->getId() != $row['uId'])
@@ -425,6 +439,7 @@ if ($currenttag!= '') {
             . $copy . "\n"
             . $edit . "\n"
             . $update . "\n"
+            . $cacheLink ."\n"
             . "  </div>\n";
 		echo $privateNoteField != ''
             ? '    <div class="privateNote" title="'. T_('Private Note on this bookmark') .'">'.$privateNoteField."</div>\n"
