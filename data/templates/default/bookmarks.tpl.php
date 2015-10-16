@@ -339,15 +339,24 @@ if ($currenttag!= '') {
 
     // Local cache
     $cacheLink = null;
-    if ($GLOBALS['cacheFolder'] != null && $GLOBALS['cacheUrl'] != null) {
+    if ($GLOBALS['cacheUrl'] != null) {
       // Hashing discussion at http://linuxprocess.free.fr/MHonArc/Oct-2005/msg00016.html
       $assetHash = sha1($row['bAddress'] . "\n");
       $assetHash = substr($assetHash, 0, 2) . '/' . substr($assetHash, 2, 2) . '/' . $assetHash;
-      $assetFile = $GLOBALS['cacheFolder'] . '/' . $assetHash;
+      $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash;
 
-      if (file_exists($assetFile)) {
-        $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash;
-        $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+      // Check if the link exists
+      if ($fp = curl_init($assetLink)) {
+        curl_setopt($fp, CURLOPT_NOBODY, true);
+        curl_exec($fp);
+
+        $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
+
+        if ($retcode == 200) {
+          $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+        }
+
+        curl_close($fp);
       }
     }
 

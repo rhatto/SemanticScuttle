@@ -788,13 +788,8 @@ $allowUnittestMode = false;
  * copy exists.
  *
  * You should download SemanticScuttle bookmarks using a tool like
- * https://git.sarava.org/?p=httruta.git
+ * https://git.fluxo.info/?p=httruta.git
  */
-
-/**
- * Set to the filesystem folder where your bookmark cache resides.
- */
-$cacheFolder = null;
 
 /**
  * Set to the base public URL of you cache folder.
