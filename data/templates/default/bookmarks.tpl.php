@@ -352,7 +352,7 @@ if ($currenttag!= '') {
 
         $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
-        if ($retcode == 200) {
+        if ($retcode != 404) {
           $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
         }
 
