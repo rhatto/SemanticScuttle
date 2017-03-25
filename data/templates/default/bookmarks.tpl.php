@@ -344,6 +344,7 @@ if ($currenttag!= '') {
       $assetHash = sha1($row['bAddress'] . "\n");
       $assetHash = substr($assetHash, 0, 2) . '/' . substr($assetHash, 2, 2) . '/' . $assetHash;
       $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash;
+      $assetPdf  = $assetLink .'/screenshot.pdf';
 
       // Check if the link exists
       if ($fp = curl_init($assetLink)) {
@@ -354,6 +355,20 @@ if ($currenttag!= '') {
 
         if ($retcode != 404) {
           $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+
+          // Check if PDF is available
+          if ($fp = curl_init($assetPdf)) {
+            curl_setopt($fp, CURLOPT_NOBODY, true);
+            curl_exec($fp);
+
+            $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
+
+            if ($retcode != 404) {
+              $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
+            }
+
+            curl_close($fp);
+          }
         }
 
         curl_close($fp);
