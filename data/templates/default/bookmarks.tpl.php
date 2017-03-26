@@ -368,7 +368,7 @@ if ($currenttag!= '') {
 
         if ($retcode != 404) {
           if (!file_exists($cacheInfo .'/'. $assetHash)) {
-            mkdir($cacheInfo .'/'. $assetHash);
+            mkdir($cacheInfo .'/'. $assetHash, 0755, true);
           }
 
           touch($cacheInfo .'/'. $assetHash .'/hascache');
