@@ -349,14 +349,14 @@ if ($currenttag!= '') {
       $assetPng  = $assetLink .'/screenshot.png';
 
       // Check if the link exists
-      if (file_exists($cacheInfo .'/' $assetHash .'/hascache')) {
+      if (file_exists($cacheInfo .'/'. $assetHash .'/hascache')) {
         $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
 
-        if (file_exists($cacheInfo .'/' $assetHash .'/haspdf')) {
+        if (file_exists($cacheInfo .'/'. $assetHash .'/haspdf')) {
           $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
         }
 
-        if (file_exists($cacheInfo .'/' $assetHash .'/haspng')) {
+        if (file_exists($cacheInfo .'/'. $assetHash .'/haspng')) {
           $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
         }
       }
@@ -367,11 +367,11 @@ if ($currenttag!= '') {
         $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
         if ($retcode != 404) {
-          if (!file_exists($cacheInfo .'/' $assetHash)) {
+          if (!file_exists($cacheInfo .'/'. $assetHash)) {
             mkdir($cacheInfo .'/' $assetHash);
           }
 
-          touch($cacheInfo .'/' $assetHash .'/hascache');
+          touch($cacheInfo .'/'. $assetHash .'/hascache');
           $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
 
           // Check if PDF is available
@@ -382,7 +382,7 @@ if ($currenttag!= '') {
             $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
             if ($retcode != 404) {
-              touch($cacheInfo .'/' $assetHash .'/haspdf');
+              touch($cacheInfo .'/'. $assetHash .'/haspdf');
               $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
             }
 
