@@ -338,6 +338,7 @@ if ($currenttag!= '') {
 		}
 
     // Local cache
+    $cacheInfo = $GLOBALS['dir_cache'] .'/urls';
     $cacheLink = null;
     if ($GLOBALS['cacheUrl'] != null) {
       // Hashing discussion at http://linuxprocess.free.fr/MHonArc/Oct-2005/msg00016.html
@@ -348,13 +349,29 @@ if ($currenttag!= '') {
       $assetPng  = $assetLink .'/screenshot.png';
 
       // Check if the link exists
-      if ($fp = curl_init($assetLink)) {
+      if (file_exists($cacheInfo .'/' $assetHash .'/hascache')) {
+        $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+
+        if (file_exists($cacheInfo .'/' $assetHash .'/haspdf')) {
+          $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
+        }
+
+        if (file_exists($cacheInfo .'/' $assetHash .'/haspng')) {
+          $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
+        }
+      }
+      else if ($fp = curl_init($assetLink)) {
         curl_setopt($fp, CURLOPT_NOBODY, true);
         curl_exec($fp);
 
         $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
         if ($retcode != 404) {
+          if (!file_exists($cacheInfo .'/' $assetHash)) {
+            mkdir($cacheInfo .'/' $assetHash);
+          }
+
+          touch($cacheInfo .'/' $assetHash .'/hascache');
           $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
 
           // Check if PDF is available
@@ -365,6 +382,7 @@ if ($currenttag!= '') {
             $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
             if ($retcode != 404) {
+              touch($cacheInfo .'/' $assetHash .'/haspdf');
               $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
             }
 
@@ -379,6 +397,7 @@ if ($currenttag!= '') {
             $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
             if ($retcode != 404) {
+              touch($cacheInfo .'/' $assetHash .'/haspng');
               $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
             }
 
