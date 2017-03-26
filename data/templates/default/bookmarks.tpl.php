@@ -368,7 +368,7 @@ if ($currenttag!= '') {
 
         if ($retcode != 404) {
           if (!file_exists($cacheInfo .'/'. $assetHash)) {
-            mkdir($cacheInfo .'/' $assetHash);
+            mkdir($cacheInfo .'/'. $assetHash);
           }
 
           touch($cacheInfo .'/'. $assetHash .'/hascache');
@@ -397,7 +397,7 @@ if ($currenttag!= '') {
             $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
 
             if ($retcode != 404) {
-              touch($cacheInfo .'/' $assetHash .'/haspng');
+              touch($cacheInfo .'/'. $assetHash .'/haspng');
               $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
             }
 
