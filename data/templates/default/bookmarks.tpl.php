@@ -344,9 +344,17 @@ if ($currenttag!= '') {
       // Hashing discussion at http://linuxprocess.free.fr/MHonArc/Oct-2005/msg00016.html
       $assetHash = sha1($row['bAddress'] . "\n");
       $assetHash = substr($assetHash, 0, 2) . '/' . substr($assetHash, 2, 2) . '/' . $assetHash;
-      $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash;
-      $assetPdf  = $assetLink .'/screenshot.pdf';
-      $assetPng  = $assetLink .'/screenshot.png';
+      $assetBase = $GLOBALS['cacheUrl'] . '/' . $assetHash;
+      $assetLink = $assetBase;
+      $assetPdf  = $assetBase.'/screenshot.pdf';
+      $assetPng  = $assetBase .'/screenshot.png';
+
+      // Handle PDF links
+      $assetFile = basename(parse_url($row['bAddress'])['path']);
+      $assetExt  = strtolower(pathinfo($assetFile, PATHINFO_EXTENSION));
+      if ($assetExt == 'pdf') {
+        $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash . '/' . $assetFile;
+      }
 
       // Check if the link exists
       if (file_exists($cacheInfo .'/'. $assetHash .'/hascache')) {
@@ -360,7 +368,7 @@ if ($currenttag!= '') {
           $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
         }
       }
-      else if ($fp = curl_init($assetLink)) {
+      else if ($fp = curl_init($assetBase)) {
         curl_setopt($fp, CURLOPT_NOBODY, true);
         curl_exec($fp);
 
