@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
  <head>
   <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title><?php echo filter($GLOBALS['sitename'] .(isset($pagetitle) ? ' » ' . $pagetitle : '')); ?></title>
   <link rel="icon" type="image/png" href="<?php echo $theme->resource('icon.png');?>" />
   <link rel="stylesheet" type="text/css" href="<?php echo $theme->resource('scuttle.css');?>" />
