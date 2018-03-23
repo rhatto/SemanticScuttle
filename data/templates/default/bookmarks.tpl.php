@@ -112,6 +112,7 @@ if($userservice->isLoggedOn()) {
 window.onload = playerLoad;
 </script>
 
+<?php if (count($bookmarks) > 1) { ?>
 <p id="sort"><?php echo $total.' '.T_("bookmark(s)"); ?> - <?php echo T_("Sort by:"); ?>
  <?php
 $titleArrow  = '';
@@ -161,6 +162,7 @@ default:
 <?php if ($GLOBALS['enableVoting']) { ?>
  <a href="?sort=<?php echo $votingSort ?>"><?php echo T_("Voting").$votingArrow; ?></a>
  <span>/</span>
+<?php } ?>
 <?php } ?>
 
 <?php
@@ -275,6 +277,12 @@ if ($currenttag!= '') {
 				break;
 		}
 
+		// Add username in case bookmark was loaded using getBookmark()
+		if (!isset($row['username']) && isset($row['uId'])) {
+			$userinfo        = $userservice->getObjectUser($row['uId']);
+			$row['username'] = $userinfo->username;
+		}
+
 		$cats = '';
 		$tagsForCopy = '';
 		$tags = $row['tags'];
@@ -310,12 +318,13 @@ if ($currenttag!= '') {
 		$update = '   <small title="'. T_('Last update') .'">('. date($GLOBALS['shortdate'], strtotime($row['bModified'])). ') </small>';
 
 		// User attribution
-		$copy = '   ' . T_('by') . ' ';
 		if ($userservice->isLoggedOn()
             && $currentUser->getUsername() == $row['username']
         ) {
+			$copy  = '   ' . T_('by') . ' ';
 			$copy .= T_('you');
-		} else {
+		} else if (isset($row['username'])) {
+			$copy  = '   ' . T_('by') . ' ';
 			$copy .= '<a href="' . createURL('bookmarks', $row['username']) . '">'
                 . SemanticScuttle_Model_UserArray::getName($row)
                 . '</a>';
@@ -506,6 +515,7 @@ if ($currenttag!= '') {
             . $edit . "\n"
             . $update . "\n"
             . $cacheLink ."\n"
+	    . ' | <a href="/permalink/'. $row['bId'] . '">Permalink</a>' ."\n"
             . "  </div>\n";
 		echo $privateNoteField != ''
             ? '    <div class="privateNote" title="'. T_('Private Note on this bookmark') .'">'.$privateNoteField."</div>\n"
@@ -524,8 +534,10 @@ if ($currenttag!= '') {
 	if(getPerPageCount($currentUser)>7) {
 		echo '<p class="backToTop"><a href="#header" title="'.T_('Come back to the top of this page.').'">'.T_('Top of the page').'</a></p>';
 	}
-	echo $pagesBanner;  // display previous and next links pages + RSS link
 
+        if (isset($bookmarks) && count($bookmarks) > 1) {
+		echo $pagesBanner;  // display previous and next links pages + RSS link
+	}
 
 } else {
 	echo '<p class="error">'.T_('No bookmarks available').'</p>';
