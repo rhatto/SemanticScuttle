@@ -337,6 +337,86 @@ if ($currenttag!= '') {
 			}
 		}
 
+    // Local cache
+    $cacheInfo = $GLOBALS['dir_cache'] .'/urls';
+    $cacheLink = null;
+    if ($GLOBALS['cacheUrl'] != null) {
+      // Hashing discussion at http://linuxprocess.free.fr/MHonArc/Oct-2005/msg00016.html
+      $assetHash = sha1($row['bAddress'] . "\n");
+      $assetHash = substr($assetHash, 0, 2) . '/' . substr($assetHash, 2, 2) . '/' . $assetHash;
+      $assetBase = $GLOBALS['cacheUrl'] . '/' . $assetHash;
+      $assetLink = $assetBase;
+      $assetPdf  = $assetBase.'/screenshot.pdf';
+      $assetPng  = $assetBase .'/screenshot.png';
+
+      // Handle PDF links
+      $assetFile = basename(parse_url($row['bAddress'])['path']);
+      $assetExt  = strtolower(pathinfo($assetFile, PATHINFO_EXTENSION));
+      if ($assetExt == 'pdf') {
+        $assetLink = $GLOBALS['cacheUrl'] . '/' . $assetHash . '/' . $assetFile;
+      }
+
+      // Check if the link exists
+      if (file_exists($cacheInfo .'/'. $assetHash .'/hascache')) {
+        $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+
+        if (file_exists($cacheInfo .'/'. $assetHash .'/haspdf')) {
+          $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
+        }
+
+        if (file_exists($cacheInfo .'/'. $assetHash .'/haspng')) {
+          $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
+        }
+      }
+      else if ($fp = curl_init($assetBase)) {
+        curl_setopt($fp, CURLOPT_NOBODY, true);
+        curl_exec($fp);
+
+        $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
+
+        if ($retcode != 404) {
+          if (!file_exists($cacheInfo .'/'. $assetHash)) {
+            mkdir($cacheInfo .'/'. $assetHash, 0755, true);
+          }
+
+          touch($cacheInfo .'/'. $assetHash .'/hascache');
+          $cacheLink = "| <a href=\"$assetLink\">Cache</a>";
+
+          // Check if PDF is available
+          if ($fp = curl_init($assetPdf)) {
+            curl_setopt($fp, CURLOPT_NOBODY, true);
+            curl_exec($fp);
+
+            $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
+
+            if ($retcode != 404) {
+              touch($cacheInfo .'/'. $assetHash .'/haspdf');
+              $cacheLink .= " | <a href=\"$assetPdf\">PDF</a>";
+            }
+
+            curl_close($fp);
+          }
+
+          // Check if PNG is available
+          if ($fp = curl_init($assetPng)) {
+            curl_setopt($fp, CURLOPT_NOBODY, true);
+            curl_exec($fp);
+
+            $retcode = curl_getinfo($fp, CURLINFO_HTTP_CODE);
+
+            if ($retcode != 404) {
+              touch($cacheInfo .'/'. $assetHash .'/haspng');
+              $cacheLink .= " | <a href=\"$assetPng\">PNG</a>";
+            }
+
+            curl_close($fp);
+          }
+        }
+
+        curl_close($fp);
+      }
+    }
+
 		// Copy link
 		if ($userservice->isLoggedOn()
             && ($currentUser->getId() != $row['uId'])
@@ -425,6 +505,7 @@ if ($currenttag!= '') {
             . $copy . "\n"
             . $edit . "\n"
             . $update . "\n"
+            . $cacheLink ."\n"
             . "  </div>\n";
 		echo $privateNoteField != ''
             ? '    <div class="privateNote" title="'. T_('Private Note on this bookmark') .'">'.$privateNoteField."</div>\n"
