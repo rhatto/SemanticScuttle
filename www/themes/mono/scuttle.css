@@ -694,10 +694,10 @@ ol#bookmarks {
 	}
 
 	ol#bookmarks {
-		width: inherit;
+		width: 70%;
 	}
 
 	#welcome {
-		width: inherit;
+		width: 66%;
 	}
 }
