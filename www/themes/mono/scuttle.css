@@ -671,3 +671,33 @@ a.bookmarklet {
 .ui-autocomplete {
     width: 458px;
 }
+
+/* Mobile First behavior */
+
+#search, #sidebar {
+	visibility: hidden;
+	display: none;
+}
+
+ol#bookmarks {
+	width: 95%;
+}
+
+#welcome {
+	width: 80%;
+}
+
+@media only screen and (min-width : 800px) {
+	#search, #sidebar {
+		visibility: inherit;
+		display: inherit;
+	}
+
+	ol#bookmarks {
+		width: inherit;
+	}
+
+	#welcome {
+		width: inherit;
+	}
+}
